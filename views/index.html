@@ -40,4 +40,12 @@ $(document).ready(function() {
     initialize_gmaps();
 });
 </script>
+<script>
+  {% autoescape false %}
+  // note to instructors: next iteration, change `all_xyz` to `templateXyz`
+  var hotels = {{ hotels | json }};
+  var restaurants = {{ restaurants | json }};
+  var activities = {{ activities | json }};
+  {% endautoescape %}
+</script>
 {% endblock %}
