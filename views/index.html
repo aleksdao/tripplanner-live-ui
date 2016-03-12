@@ -13,7 +13,9 @@
 </div>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAkarjA8hlysMC5aK7ywsrUwYY6UwpnXG0&sensor=true"></script>
 <script>
-  var map;
+var map;
+var bounds = new google.maps.LatLngBounds();
+var markers = {};
 function initialize_gmaps() {
     // initialize new google maps LatLng object
     var myLatlng = new google.maps.LatLng(40.705189,-74.009209);
@@ -48,9 +50,9 @@ $(document).ready(function() {
   var hotels = {{ hotels | json }};
   var restaurants = {{ restaurants | json }};
   var activities = {{ activities | json }};
-  var items = {
+  var places = {
     Hotels:hotels,
-    Retaurants:restaurants,
+    Restaurants:restaurants,
     Activities: activities
   };
   {% endautoescape %}
