@@ -43,21 +43,80 @@ $(function() {
 
   $("#add-day-btn").on("click", function() {
 
-    markers = {};
-    tripByDay.push(markers);
-    var li = $('<li><a href="#">' + tripByDay.length + '</a></li>')
+    tripByDay.push({});
+    var li = $('<li><a href="#">' + tripByDay.length + '</a></li>');
     $(this).before(li);
-  })
+  });
+
+  $('#day-selector').on('click', 'a', function(){
+    var index = Number($(this).html()) -1;
+    var li = $(this).parent();
+    if(li.attr('id') !== "add-day-btn"){
+      var prevElem = $('#day-selector .active');
+      prevElem.removeClass('active');
+      li.addClass('active');
+      refreshDOM();
+      //Resetting happens here
+      clearMap(markers);
+      markers = tripByDay[index];
+      populateItinerary(markers);
+      populateMap(markers);
+
+
+    }
+
+  });
+
+
 
 });
 
+function populateItinerary(day){
+  var cats = {
+    Hotels: $('#chosen-Hotels'),
+    Restaurants: $('#chosen-Restaurants'),
+    Activities: $('#chosen-Activities')
+  };
+
+  for (var name in day){
+    var li = $('<li class="list-group-item" data-name="'+ name +'">' + name + '<button class="btn btn-danger btn-xs pull-right">X</button></li>');
+    cats[day[name].category].append(li);
+  }
+}
+function clearMap(day){
+  for (var name in day)
+    day[name].marker.setMap(null);
+  bounds = new google.maps.LatLngBounds();
+  map.fitBounds(bounds);
+}
+function populateMap(day){
+  for (var name in day){
+    setMarker(name, day[name].marker, day[name].category);
+  }
+}
+
+
+function refreshDOM(){
+  $('#chosen-Hotels').empty();
+  $('#chosen-Restaurants').empty();
+  $('#chosen-Activities').empty();
+}
+
 
 function setMarker(item, location, category){
-    var marker = new google.maps.Marker({
+  var marker;
+  if (!(location instanceof google.maps.Marker)){
+
+    marker = new google.maps.Marker({
       title: item.name,
       position: location,
       animation: google.maps.Animation.DROP
     });
+  }
+  else {
+    console.log('not marker');
+    marker = location;
+  }
     bounds.extend(marker.getPosition());
     // markers.push(marker);
     marker.setMap(map);
@@ -67,13 +126,13 @@ function setMarker(item, location, category){
 
 
 function removeMarker(name) {
-  var marker = markers[name];
+  var marker = markers[name].marker;
   if (marker)
     marker.setMap(null);
   delete markers[name];
   bounds = new google.maps.LatLngBounds();
   for(var name in markers) {
-    bounds.extend(markers[name].getPosition());
+    bounds.extend(markers[name].marker.getPosition());
   }
   map.fitBounds(bounds);
 }
