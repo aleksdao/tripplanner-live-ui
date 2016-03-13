@@ -5,7 +5,7 @@ $(function() {
     var elem = $("#" + category + "Chooser");
     var index = elem.prop('selectedIndex');
     var item = places[category][Number(index)];
-    var li = $('<li data-name="'+ item.name +'">' + item.name + '<button class="btn btn-danger btn-xs pull-right">X</button></li>');
+    var li = $('<li class="list-group-item" data-name="'+ item.name +'">' + item.name + '<button class="btn btn-danger btn-xs pull-right">X</button></li>');
 
 
     var location = {
@@ -40,6 +40,15 @@ $(function() {
     removeMarker(liName);
     li.remove();
   });
+
+  $("#add-day-btn").on("click", function() {
+
+    markers = {};
+    tripByDay.push(markers);
+    var li = $('<li><a href="#">' + tripByDay.length + '</a></li>')
+    $(this).before(li);
+  })
+
 });
 
 
@@ -52,7 +61,7 @@ function setMarker(item, location, category){
     bounds.extend(marker.getPosition());
     // markers.push(marker);
     marker.setMap(map);
-    markers[item.name] = marker;
+    markers[item.name] = {marker: marker, category: category};
     map.fitBounds(bounds);
 }
 
